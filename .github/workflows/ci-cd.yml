@@ -31,12 +31,12 @@ jobs:
 
       - name: Build Docker image
         run: |
-            docker build -t ghcr.io/gyoseitatsuki/mywebapp-kub-tp:latest .
+            docker build -t ghcr.io/gyoseitatsuki/tp2kubernetes:latest .
   
         # Étape 4 : Pousser l'image vers GHCR
       - name: Push Docker image
         run: |
-            docker push ghcr.io/gyoseitatsuki/mywebapp-kub-tp:latest 
+            docker push ghcr.io/gyoseitatsuki/tp2kubernetes:latest 
 
   # Étape Deploy
   deploy:
