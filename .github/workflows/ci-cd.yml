@@ -8,7 +8,8 @@ on:
     types: [created] # Déploiement uniquement lors d'une release (tag)
 
 env:
-  IMAGE_NAME: projet-tp2-kubernetes
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/projet-tp2-kubernetes:latest
+
 
 
 jobs:
