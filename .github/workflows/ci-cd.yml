@@ -5,12 +5,10 @@ on:
     branches:
       - main
   release:
-    types: [created] # Déploiement uniquement lors d'une release (tag)
+    types: [created]  # Déploiement uniquement lors d'une release (tag)
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository | split('/')[-1] | toLowerCase }}:latest
-
-
+  IMAGE_NAME: ghcr.io/${{ github.repository }}:latest  # Nous définissons simplement le nom complet de l'image sans traitement
 
 jobs:
   # Étape Build
@@ -30,6 +28,15 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Convert IMAGE_NAME to lowercase
+        run: |
+          # Récupérer le nom du repository sans le propriétaire (avant le /)
+          REPO_NAME=$(echo $IMAGE_NAME | cut -d '/' -f 2)
+          # Convertir en minuscules
+          IMAGE_NAME="ghcr.io/$(echo $REPO_NAME | tr '[:upper:]' '[:lower:]'):latest"
+          echo "Using image name: $IMAGE_NAME"
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV  # Définir la variable d'environnement pour l'utiliser dans les étapes suivantes
 
       - name: Build and Push Docker Image
         run: |
@@ -64,6 +71,5 @@ jobs:
             --docker-username=${{ secrets.GHCR_USERNAME }} \
             --docker-password=${{ secrets.GHCR_TOKEN }} \
             --docker-email=unused@example.com --dry-run=client -o yaml | kubectl apply -f -
-
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
